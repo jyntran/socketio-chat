@@ -7,12 +7,14 @@ app.get('/', function(req, res){
 });
 
 io.on('connection', function(socket){
+  io.emit('system message', '- a user connected -');
   console.log('a user connected');
   socket.on('chat message', function(msg){
     io.emit('chat message', msg);
     console.log('message: ' + msg);
   });
   socket.on('disconnect', function(){
+    io.emit('system message', '- user disconnected -');
     console.log('user disconnected');
   });
 });
