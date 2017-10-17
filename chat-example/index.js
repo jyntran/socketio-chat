@@ -17,12 +17,18 @@ io.on('connection', function(socket){
     io.emit('system message', message);
     console.log(message);
 
+    console.log(users);
+    io.emit('users', users);
+
     socket.on('chat message', function(msg){
       socket.broadcast.emit('chat message', msg);
       console.log('[' + msg.timestamp + '] ' + msg.username + ': ' + msg.message);
     });
 
     socket.on('disconnect', function(){
+      users.splice(users.indexOf(socket.nickname), 1);
+      console.log(users);
+      io.emit('users', users);
       message = '[' + new Date().toLocaleTimeString('en-US') + '] ' + name + ' disconnected';
       io.emit('system message', message);
       console.log(message);
