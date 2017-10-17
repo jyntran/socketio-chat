@@ -1,21 +1,32 @@
 var app = require('express')();
 var http = require('http').Server(app);
 var io = require('socket.io')(http);
+var port = process.env.PORT || 3000;
 
 app.get('/', function(req, res){
   res.sendFile(__dirname + '/index.html');
 });
 
+users = [];
+
 io.on('connection', function(socket){
-  io.emit('system message', '- a user connected -');
-  console.log('a user connected');
-  socket.on('chat message', function(msg){
-    socket.broadcast.emit('chat message', msg);
-    console.log('message: ' + msg);
-  });
-  socket.on('disconnect', function(){
-    io.emit('system message', '- user disconnected -');
-    console.log('user disconnected');
+  socket.on('username', function(name) {
+    socket.nickname = name;
+    users.push(socket.nickname);
+    message = '[' + new Date().toLocaleTimeString('en-US') + '] ' + name + ' connected';
+    io.emit('system message', message);
+    console.log(message);
+
+    socket.on('chat message', function(msg){
+      socket.broadcast.emit('chat message', msg);
+      console.log('[' + msg.timestamp + '] ' + msg.username + ': ' + msg.message);
+    });
+
+    socket.on('disconnect', function(){
+      message = '[' + new Date().toLocaleTimeString('en-US') + '] ' + name + ' disconnected';
+      io.emit('system message', message);
+      console.log(message);
+    });
   });
 });
 
