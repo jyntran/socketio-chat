@@ -17,7 +17,7 @@ io.on('connection', function(socket){
     io.emit('system message', message);
     console.log(message);
 
-    console.log(users);
+    console.log('users', users);
     io.emit('users', users);
 
     socket.on('chat message', function(msg){

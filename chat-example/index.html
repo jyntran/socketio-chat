@@ -104,7 +104,7 @@
         var socket = io();
 
         $('.login form').submit(function(){
-          socket.username = $('#n').val();
+          socket.username = $('#n').val() || 'user' + Math.floor(Math.random() * 10) + new Date().getTime().toString().slice(8);
           socket.emit('username', socket.username);
           $('.login').hide();
           return false;
